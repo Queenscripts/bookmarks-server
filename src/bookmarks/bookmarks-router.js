@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const { isWebUri } = require('valid-url')
 const xss = require('xss')
@@ -16,7 +17,7 @@ const serializeBookmark = bookmark => ({
 })
 
 bookmarksRouter
-  .route('/bookmarks')
+  .route('/api/bookmarks')
   .get((req, res, next) => {
     BookarksService.getAllBookmarks(req.app.get('db'))
       .then(bookmarks => {
@@ -54,7 +55,7 @@ bookmarksRouter
         logger.info(`Card with id ${bookmark.id} created.`)
         res
           .status(201)
-          .location(`/bookmarks/${bookmark.id}`)
+          .location(path.posix.join(req.originalUrl, `/${bookmark.id}`))
           .json(serializeBookmark(bookmark))
       })
       .catch(next)
